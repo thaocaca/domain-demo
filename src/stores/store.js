@@ -4,16 +4,18 @@ import { all } from 'redux-saga/effects';
 
 // Reducers
 import { authReducer } from './reducers/authReducers';
+import { domainReducer } from './reducers/domainReducers';
 
 // Sagas
-import { watchAuthSaga } from './sagas/authSaga';
-
+import { watchAuthSaga } from './saga/authSaga';
+import { watchAuthSaga } from './saga/domainSaga';
 // Tạo saga middleware
 const sagaMiddleware = createSagaMiddleware();
 
 // Root Reducer
 const rootReducer = combineReducers({
-  auth: authReducer
+  auth: authReducer,
+  domain: domainReducer
   // Các reducer khác
 });
 
