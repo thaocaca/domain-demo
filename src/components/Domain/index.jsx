@@ -1,57 +1,63 @@
-import React from 'react';
-import { useSelector, useDispatch } from 'react-redux';
-import { addToCart } from '../redux/actions/productActions';
-import { ShoppingCart } from 'lucide-react';
+import { Plus } from "lucide-react";
 
-const ProductList = () => {
-  const { products, loading, error } = useSelector(state => state.products);
-  const dispatch = useDispatch();
-
-  const handleAddToCart = (product) => {
-    dispatch(addToCart(product));
+const DomainList = ({ domains, cart, onAddToCart }) => {
+  const formatPrice = (price) => {
+    return new Intl.NumberFormat('vi-VN', {
+      style: 'currency',
+      currency: 'VND'
+    }).format(price);
   };
 
-  if (loading) return (
-    <div className="flex justify-center items-center h-64">
-      Đang tải...
-    </div>
-  );
-
-  if (error) return (
-    <div className="text-red-500 text-center p-4">
-      Lỗi: {error}
-    </div>
-  );
-
   return (
-    <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4 p-4">
-      {products.map(product => (
-        <div 
-          key={product.id} 
-          className="border rounded-lg p-4 flex flex-col items-center shadow-md hover:shadow-lg transition-shadow"
-        >
-          <img 
-            src={product.image} 
-            alt={product.title} 
-            className="w-32 h-32 object-contain mb-4"
-          />
-          <h3 className="text-lg font-semibold text-center mb-2">
-            {product.title}
-          </h3>
-          <p className="text-gray-600 mb-2">
-            {product.price.toLocaleString()} VNĐ
-          </p>
-          <button 
-            onClick={() => handleAddToCart(product)}
-            className="flex items-center bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 transition-colors"
+    <div className="bg-white rounded-lg shadow">
+      <div className="divide-y divide-gray-200">
+        {domains.map((domain) => (
+          <div 
+            key={domain.name}
+            className="p-4 hover:bg-gray-50 transition-colors duration-150 ease-in-out"
           >
-            <ShoppingCart size={16} className="mr-2" />
-            Thêm vào giỏ
-          </button>
+            <div className="flex items-center justify-between">
+              <div className="flex-1">
+                <h3 className="text-lg font-medium text-gray-900">
+                  {domain.name}
+                </h3>
+                <div className="mt-2 flex items-center space-x-4">
+                  <span className="text-lg font-semibold text-blue-600">
+                    {formatPrice(domain.price)}
+                  </span>
+                  <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium
+                    ${domain.status === 'Active' ? 'bg-green-100 text-green-800' : 
+                      domain.status === 'Inactive' ? 'bg-red-100 text-red-800' : 
+                      'bg-yellow-100 text-yellow-800'}`}>
+                    {domain.status}
+                  </span>
+                </div>
+              </div>
+              <button
+                onClick={() => onAddToCart(domain)}
+                disabled={cart.find(item => item.name === domain.name)}
+                className={`ml-4 inline-flex items-center px-4 py-2 rounded-md text-sm font-medium
+                  ${cart.find(item => item.name === domain.name)
+                    ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
+                    : 'bg-blue-600 text-white hover:bg-blue-700'}`}
+              >
+                <Plus className="h-4 w-4 mr-2" />
+                {cart.find(item => item.name === domain.name)
+                  ? 'Đã thêm vào giỏ'
+                  : 'Thêm vào giỏ'}
+              </button>
+            </div>
+          </div>
+        ))}
+      </div>
+      
+      {domains.length === 0 && (
+        <div className="p-4 text-center text-gray-500">
+          Không tìm thấy tên miền phù hợp.
         </div>
-      ))}
+      )}
     </div>
   );
 };
 
-export default ProductList;
+export default DomainList;

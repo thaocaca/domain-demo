@@ -1,35 +1,23 @@
 import React, { useState } from 'react';
-import { useDispatch } from 'react-redux';
-import { searchDomainsRequest } from '../../stores/actions/domaintAction';
-import { Search } from 'lucide-react';
+import { Search, ShoppingCart, Plus } from 'lucide-react';
 
-const SearchBar = () => {
-  const [query, setQuery] = useState('');
-  const dispatch = useDispatch();
-
-  const handleSearch = () => {
-    dispatch(searchDomainsRequest(query));
-  };
-
+// Search Bar Component
+const SearchBar = ({ onSearch }) => {
   return (
-    <div className="flex items-center space-x-2 p-4 bg-gray-100">
-      <div className="relative w-full">
-        <input 
-          type="text"
-          value={query}
-       onChange={(e) => setQuery(e.target.value)}
-          placeholder="Tìm kiếm sản phẩm"
-          className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-        />
-        <button 
-          onClick={handleSearch}
-          className="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-500"
-        >
-          <Search size={20} />
-        </button>
+    <div className="relative mb-6">
+      <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+        <Search className="h-5 w-5 text-gray-400" />
       </div>
+      <input
+        type="text"
+        className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg 
+                   focus:ring-2 focus:ring-blue-500 focus:border-blue-500
+                   placeholder-gray-400"
+        placeholder="Search domain ..."
+        onChange={(e) => onSearch(e.target.value)}
+      />
     </div>
   );
 };
-
+ 
 export default SearchBar;

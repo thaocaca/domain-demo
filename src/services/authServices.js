@@ -1,11 +1,12 @@
 import axios from 'axios';
+import axiosClient from './axiosClient';
 
-const API_URL = 'https://api.example.com/auth/';
+
 
 export const authService = {
   login: async (username, password) => {
     try {
-      const response = await axios.post(API_URL + 'login', { 
+      const response = await axiosClient.post(API_URL + 'login', { 
         username, 
         password 
       });
