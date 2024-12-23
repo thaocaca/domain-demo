@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useDispatch } from 'react-redux';
-import { searchProductsRequest } from '../redux/actions/productActions';
+import { searchDomainsRequest } from '../../stores/actions/domaintAction';
 import { Search } from 'lucide-react';
 
 const SearchBar = () => {
@@ -8,7 +8,7 @@ const SearchBar = () => {
   const dispatch = useDispatch();
 
   const handleSearch = () => {
-    dispatch(searchProductsRequest(query));
+    dispatch(searchDomainsRequest(query));
   };
 
   return (
@@ -17,12 +17,12 @@ const SearchBar = () => {
         <input 
           type="text"
           value={query}
-     //     onChange={(e) => setQuery(e.target.value)}
+       onChange={(e) => setQuery(e.target.value)}
           placeholder="Tìm kiếm sản phẩm"
           className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
         />
         <button 
-  //        onClick={handleSearch}
+          onClick={handleSearch}
           className="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-500"
         >
           <Search size={20} />

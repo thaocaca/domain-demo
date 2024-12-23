@@ -1,3 +1,6 @@
+import { LOGIN_REQUEST, LOGIN_SUCCESS,LOGIN_FAILURE } from "../actions/authActions";
+
+
 const initialState = {
     isAuthenticated: false,
     user: null,
@@ -24,10 +27,6 @@ const initialState = {
           loading: false, 
           error: action.payload 
         };
-      case LOGOUT_SUCCESS:
-        return initialState;
-      default:
-        return state;
     }
   };
   
