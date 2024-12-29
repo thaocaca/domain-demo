@@ -1,46 +1,56 @@
-import { call, put, takeLatest } from "redux-saga/effects";
+import { call, put, takeEvery } from "redux-saga/effects";
 import { loginSuccess, loginFailure } from "../actions/authActions";
 import { authService } from "../../services/authServices";
-import { LOGIN_REQUEST } from "../constants/authConstant";
+import { CHECK_SESSION, LOGIN_REQUEST } from "../constants/authConstant";
+import { checkExistSession, createSession } from "../../services/authServices";
 
 function* loginSaga(action) {
+  console.log(JSON.stringify(action))
   try {
-    // Gọi API login
-    const user = yield call(
-      authService.login,
-      action.payload.email,
-      action.payload.password
-    );
-
-    // Dispatch action success
-    yield put(loginSuccess(user));
-
-    // Chuyển hướng sau khi login thành công (nếu cần)
-    // Sử dụng history từ react-router-dom
-    // history.push('/dashboard');
+    const response = yield call(authService.login, action.payload);
+    console.log(response);
+    // Lưu sessionId vào localStorage và Redux
+    const sessionId = response.id;
+    localStorage.setItem("sid", sessionId);
+    // Lưu thông tin người dùng
+    yield put(loginSuccess({ user: response.data.user, sessionId }));
   } catch (error) {
     yield put(loginFailure(error.message));
   }
 }
 
-// Worker Saga cho logout
-// function* logoutSaga() {
-//   try {
-//     // Gọi service logout
-//     yield call(authService.logout);
-
-//     // Dispatch action logout success
-//     yield put(logoutSuccess());
-
-//     // Chuyển hướng về trang login
-//     // history.push('/login');
-//   } catch (error) {
-//     console.error('Logout failed', error);
-//   }
-// }
+function* checkSessionSaga() {
+  try {
+    let sessionId = localStorage.getItem("sid");
+    console.log(sessionId);
+    // Nếu sessionId không tồn tại, gọi API để tạo session mới
+    if (!sessionId) {
+      const response = yield call(createSession);
+      console.log(response);
+      
+      sessionId = response.id;
+      localStorage.setItem("sid", sessionId);
+    } else {
+      try {
+        const response = yield call(checkExistSession);
+        if (response) {
+          sessionId = response.id;
+          localStorage.setItem("sid", sessionId);
+        }
+      } catch (error) {
+        console.log(error);
+        const response = yield call(createSession);
+        sessionId = response.id;
+        localStorage.setItem("sid", sessionId);
+      }
+    }
+  } catch (error) {
+    console.error("Error checking session:", error);
+  }
+}
 
 // Watcher Saga
 export function* watchAuthSaga() {
-  yield takeLatest(LOGIN_REQUEST, loginSaga);
-  //yield takeLatest(LOGOUT_REQUEST, logoutSaga);
+  yield takeEvery(LOGIN_REQUEST, loginSaga);
+  yield takeEvery(CHECK_SESSION, checkSessionSaga);
 }

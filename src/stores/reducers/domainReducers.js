@@ -1,49 +1,44 @@
-import * as types from "../actions/domaintAction";
+import { ADD_TO_CART, FILTER_DOMAINS, REMOVE_FROM_CART, SET_DOMAINS, SET_SEARCH_TERM } from "../constants/domainConstant";
 
-const initialDomainState = {
+const initialState = {
   domains: [],
-  loading: false,
-  error: null,
+  filteredDomains: [],
+  searchTerm: "",
 };
 
-export const domainReducer = (state = initialDomainState, action) => {
+const domainReducer = (state = initialState, action) => {
   switch (action.type) {
-    case types.SEARCH_DOMAINS_REQUEST:
-      return { ...state, loading: true };
-    case types.SEARCH_DOMAINS_SUCCESS:
+    case SET_DOMAINS:
       return {
         ...state,
-        loading: false,
         domains: action.payload,
+        filteredDomains: action.payload,
       };
-    case types.SEARCH_DOMAINS_FAILURE:
+    case SET_SEARCH_TERM:
       return {
         ...state,
-        loading: false,
-        error: action.payload,
+        searchTerm: action.payload,
       };
+    case FILTER_DOMAINS:
+      return {
+        ...state,
+        filteredDomains: state.domains.filter((domain) =>
+          domain.name.toLowerCase().includes(state.searchTerm.toLowerCase())
+        ),
+      };
+    case ADD_TO_CART:
+        return {
+          ...state,
+          cart: [...state.cart, action.payload],
+        };
+      case REMOVE_FROM_CART:
+        return {
+          ...state,
+          cart: state.cart.filter((item) => item.name !== action.payload),
+        };  
     default:
       return state;
   }
 };
 
-export const cartReducer = (state = [], action) => {
-  switch (action.type) {
-    case types.ADD_TO_CART:
-      const existingDomain = state.find(
-        (item) => item.id === action.payload.id
-      );
-      if (existingDomain) {
-        return state.map((item) =>
-          item.id === action.payload.id
-            ? { ...item, quantity: item.quantity + 1 }
-            : item
-        );
-      }
-      return [...state, { ...action.payload, quantity: 1 }];
-    case types.REMOVE_FROM_CART:
-      return state.filter((domain) => domain.id !== action.payload);
-    default:
-      return state;
-  }
-};
+export default domainReducer;

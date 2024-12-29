@@ -1,24 +1,28 @@
 import {
-  SEARCH_DOMAINS_REQUEST,
-  SEARCH_DOMAINS_SUCCESS,
-  SEARCH_DOMAINS_FAILURE,
+  FETCH_DOMAINS,
+  SET_DOMAINS,
+  FILTER_DOMAINS,
+  SET_SEARCH_TERM,
   ADD_TO_CART,
   REMOVE_FROM_CART,
-} from "../constants/productType";
+} from "../constants/domainConstant";
 
-export const searchDomainsRequest = (query) => ({
-  type: SEARCH_DOMAINS_REQUEST,
-  payload: query,
+export const fetchDomains = () => ({
+  type: FETCH_DOMAINS,
 });
 
-export const searchDomainsSuccess = (products) => ({
-  type: SEARCH_DOMAINS_SUCCESS,
-  payload: products,
+export const setDomains = (domains) => ({
+  type: SET_DOMAINS,
+  payload: domains,
 });
 
-export const searchDoaminsFailure = (error) => ({
-  type: SEARCH_DOMAINS_FAILURE,
-  payload: error,
+export const setSearchTerm = (term) => ({
+  type: SET_SEARCH_TERM,
+  payload: term,
+});
+
+export const filterDomains = () => ({
+  type: FILTER_DOMAINS,
 });
 
 export const addToCart = (product) => ({

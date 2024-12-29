@@ -1,54 +1,51 @@
-import { ShoppingCart } from "lucide-react";
-import DomainList from "../../components/Domain";
-import { useState } from "react";
-import SearchBar from "../../components/SearchDomain";
+import DomainList from "../../components/Domain/DomainList";
+import { useEffect, useState } from "react";
+import SearchBar from "../../components/Domain/SearchBar";
+import { useDispatch, useSelector } from "react-redux";
+import { fetchDomains, setSearchTerm, filterDomains } from "../../stores/actions/domaintAction";
 
 const HomePage = () => {
-  const [searchQuery, setSearchQuery] = useState('');
+  const dispatch = useDispatch();
+  //const [searchQuery, setSearchQuery] = useState("");
   const [cart, setCart] = useState([]);
-  
+  const domains = useSelector((state) => state.domains.filteredDomains);
   // Sample domain data
-  const domains = [
-    { name: 'example.com', price: 1200000, status: 'Active', lastChecked: '2024-12-22' },
-    { name: 'test-domain.com', price: 890000, status: 'Active', lastChecked: '2024-12-21' },
-    { name: 'mywebsite.com', price: 2500000, status: 'Active', lastChecked: '2024-12-23' },
-    { name: 'newdomain.com', price: 750000, status: 'Active', lastChecked: '2024-12-20' },
-    { name: 'anotherdomain.com', price: 1500000, status: 'Active', lastChecked: '2024-12-22' },
-  ];
-
-  const filteredDomains = domains.filter(domain =>
-    domain.name.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  // const filteredDomains = domains.filter((domain) =>
+  //   domain.name.toLowerCase().includes(searchQuery.toLowerCase())
+  // );
 
   const handleSearch = (query) => {
-    setSearchQuery(query);
+    dispatch(setSearchTerm(query)); // Lưu search term
+    dispatch(filterDomains());
   };
 
   const handleAddToCart = (domain) => {
-    if (!cart.find(item => item.name === domain.name)) {
-      setCart([...cart, domain]);
-    }
+    setCart((prevCart) => [...prevCart, domain]);
+    console.log(domain);
   };
 
-  return (
-    <div className="max-w-4xl mx-auto p-6">
-      {/* Cart Summary */}
-      <div className="mb-4 flex items-center justify-end space-x-2">
-        <ShoppingCart className="h-5 w-5 text-gray-600" />
-        <span className="text-gray-600">
-          {cart.length} domain{cart.length !== 1 ? 's' : ''} trong giỏ hàng
-        </span>
-      </div>
+  useEffect(() => {
+    dispatch(fetchDomains()); // Fetch domains khi tải trang
+  }, [dispatch]);
 
-      {/* Search Bar */}
+  return (
+    <div className="max-w-4xl mx-auto p-4">
+      {/* Thanh tìm kiếm */}
       <SearchBar onSearch={handleSearch} />
 
-      {/* Domain List */}
-      <DomainList 
-        domains={filteredDomains}
+      {/* Danh sách domain */}
+      <DomainList
+        domains={domains}
         cart={cart}
         onAddToCart={handleAddToCart}
       />
+
+      {/* Thông báo khi không tìm thấy domain */}
+      {/* {filteredDomains.length === 0 && (
+        <div className="mt-4 text-center text-gray-500">
+          Không tìm thấy tên miền phù hợp.
+        </div>
+      )} */}
     </div>
   );
 };

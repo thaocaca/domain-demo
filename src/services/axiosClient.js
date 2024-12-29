@@ -1,21 +1,26 @@
 import axios from "axios";
-import queryString from "query-string";
 // Set up default config for http requests here
-// Please have a look at here `https://github.com/axios/axios#request config` for the full list of configs
-const REACT_APP_BASE_URL = 'https://api.example.com/auth/';
-
+// Please have a look at here https://github.com/axios/axios#request config for the full list of configs
 const axiosClient = axios.create({
-  baseURL: REACT_APP_BASE_URL,
+  baseURL: "http://localhost:5173/v1",
+  timeout: 10000,
   headers: {
     "content-type": "application/json",
   },
-  paramsSerializer: (params) => queryString.stringify(params),
 });
 
-axiosClient.interceptors.request.use(async (config) => {
-  // Handle token here ...
-  return config;
-});
+axiosClient.interceptors.request.use(
+  async (config) => {
+    let sessionId = localStorage.getItem("sid");
+    if (sessionId && config.url !== '/sessions') {
+      config.headers['sid'] = sessionId;
+    }
+    return config;
+  },
+  (error) => {
+    return Promise.reject(error);
+  }
+);
 
 axiosClient.interceptors.response.use(
   (response) => {

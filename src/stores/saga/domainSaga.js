@@ -1,20 +1,65 @@
-import { call, put, takeLatest } from 'redux-saga/effects';
-import * as types from '../actions/domaintAction';
-import * as productApi from '../../services/productApi';
-import { 
-  searchProductsSuccess, 
-  searchProductsFailure 
-} from '../actions/domaintAction';
+import { call, put, takeEvery } from "redux-saga/effects";
+import { ADD_TO_CART, FETCH_DOMAINS } from "../constants/domainConstant";
+import { setDomains } from "../actions/domaintAction";
 
-function* searchDomainSaga(action) {
+function fetchDomainsApi() {
+  // Giả lập fetch API
+  return Promise.resolve([
+    {
+      name: "hosttest.work",
+      prices: [
+        {
+          id: 1,
+          currency_code: "USD",
+          billing_cycle: 1,
+          registration_price: 4.25,
+        },
+      ],
+    },
+    {
+      name: "host.com",
+      prices: [
+        {
+          id: 2,
+          currency_code: "YEN",
+          billing_cycle: 1,
+          registration_price: 4.25,
+        },
+      ],
+    },
+    {
+      name: "domain.work",
+      prices: [
+        {
+          id: 3,
+          currency_code: "VND",
+          billing_cycle: 1,
+          registration_price: 4.25,
+        },
+      ],
+    },
+  ]);
+}
+
+function* fetchDomains() {
   try {
-    const products = yield call(productApi.searchProducts, action.payload);
-    yield put(searchDomainsSuccess(products));
+    const domains = yield call(fetchDomainsApi);
+    yield put(setDomains(domains));
   } catch (error) {
-    yield put(searchDomainsFailure(error.message));
+    console.error("Error fetching domains:", error);
   }
 }
 
-export function* watchSearchProducts() {
-  yield takeLatest(types.SEARCH_PRODUCTS_REQUEST, searchDomainSaga);
+function* handleAddToCart(action) {
+  try {
+    const result = yield call(addToCartApi, action.payload);
+    console.log("Added to cart:", result);
+  } catch (error) {
+    console.error("Error adding to cart:", error);
+  }
+}
+
+export default function* domainSaga() {
+  yield takeEvery(FETCH_DOMAINS, fetchDomains);
+  yield takeEvery(ADD_TO_CART, handleAddToCart);
 }

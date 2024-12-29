@@ -1,30 +1,36 @@
-import axios from 'axios';
+
 import axiosClient from './axiosClient';
 
-
-
 export const authService = {
-  login: async (username, password) => {
+  login: async (credentials) => {
     try {
-      const response = await axiosClient.post(API_URL + 'login', { 
-        username, 
-        password 
-      });
-      
-      // Lưu token vào localStorage
-      localStorage.setItem('token', response.data.token);
-      
+      const response = await axiosClient.post("/accounts/login", credentials);
+      console.log("Login success");
       return response.data;
     } catch (error) {
-      throw error.response ? error.response.data : new Error('Đăng nhập thất bại');
+      throw error.response
+        ? error.response.data
+        : new Error("Login not success");
     }
   },
+};
 
-  logout: () => {
-    localStorage.removeItem('token');
-  },
-
-  getCurrentUser: () => {
-    return localStorage.getItem('token');
+export const createSession = async () => {
+  const response = await axiosClient.post("/sessions");
+  if (response.status !== 200) {
+    console.log("response.status !== 200");
+    // throw new Error('Create failed');
   }
+  JSON.stringify(response.data);
+  return response.data.data;
+};
+
+export const checkExistSession = async () => {
+  const response = await axiosClient.get("/sessions");
+  JSON.stringify(response.data);
+  if (response.status !== 200) {
+    throw new Error("Not existing");
+  }
+
+  return response.data.data;
 };

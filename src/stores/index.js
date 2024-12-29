@@ -8,14 +8,15 @@ import authReducer from "./reducers/authReducers";
 // Sagas
 import { watchAuthSaga } from "./saga/authSaga";
 import profileReducer from "./reducers/profileReducers";
-import profileSaga from "./saga/profileSaga";
+import domainSaga from "./saga/domainSaga";
+import domainReducer from "./reducers/domainReducers";
 // Tạo saga middleware
 const sagaMiddleware = createSagaMiddleware();
 
 // Root Reducer
 const rootReducer = combineReducers({
   auth: authReducer,
-  profile: profileReducer,
+ domains: domainReducer
   // domain: domainReducer
   // Các reducer khác
 });
@@ -24,7 +25,7 @@ const rootReducer = combineReducers({
 function* rootSaga() {
   yield all([
     watchAuthSaga(),
-    profileSaga(),
+    domainSaga(),
     // Các saga khác
   ]);
 }

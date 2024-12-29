@@ -1,6 +1,6 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { loginRequest } from "../../stores/actions/authActions";
+import { checkSession, loginRequest } from "../../stores/actions/authActions";
 
 function LoginPage() {
   const [email, setEmail] = useState("");
@@ -13,8 +13,13 @@ function LoginPage() {
   const handleLogin = (e) => {
     e.preventDefault();
     // Dispatch action login request
-    dispatch(loginRequest(username, password));
+    dispatch(loginRequest({email, password}));
   };
+
+  useEffect(() => {
+    console.log('checkSession');
+    dispatch(checkSession());
+}, [])
 
   return (
     <div className=" bg-gray-100 relative flex flex-col justify-center min-h-screen overflow-hidden">

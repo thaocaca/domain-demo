@@ -1,0 +1,6 @@
+export const FETCH_DOMAINS = 'FETCH_DOMAINS';
+export const SET_DOMAINS = 'SET_DOMAINS';
+export const SET_SEARCH_TERM = 'SET_SEARCH_TERM'
+export const FILTER_DOMAINS = 'FILTER_DOMAINS';
+export const ADD_TO_CART = 'ADD_TO_CART';
+export const REMOVE_FROM_CART = 'REMOVE_FROM_CART';
